@@ -28,6 +28,12 @@ angular.module('prismic.io', [])
         config.clientSecret = clientSecret;
       };
 
+      // Set this if you want to use a release, specified by its name
+      config.releaseName = angular.isUndefined(config.releaseName) ? '' : config.releaseName;
+      object.setReleaseName = function(releaseName) {
+        config.releaseName = releaseName;
+      };
+
       config.linkResolver = angular.isUndefined(config.linkResolver) ? function(){} : config.linkResolver;
       object.setLinkResolver = function(linkResolver) {
         config.linkResolver = linkResolver;
@@ -94,6 +100,13 @@ angular.module('prismic.io', [])
         function buildContext() {
           maybeApi = getApiHome().then(function(api) {
             var ref = queryString['ref'];
+            if (!ref) {
+              var allRefs = api.data.refs;
+              var refMatchs = allRefs.filter(function(refDetail) {
+                return refDetail.label === config.releaseName;
+              });
+              ref = refMatchs.length > 0 ? refMatchs[0].ref : api.data.master.ref;
+            }
             var context = {
               ref: (ref || api.data.master.ref),
               api: api,
