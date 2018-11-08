@@ -34,6 +34,12 @@ angular.module('prismic.io', [])
         config.releaseName = releaseName;
       };
 
+      // Set this to true if you do not want to use the ref from the URL query
+      config.disableQS = angular.isUndefined(config.disableQS) ? '' : config.disableQS;
+      object.setDisableQS = function(disableQS) {
+        config.disableQS = disableQS;
+      };
+
       config.linkResolver = angular.isUndefined(config.linkResolver) ? function(){} : config.linkResolver;
       object.setLinkResolver = function(linkResolver) {
         config.linkResolver = linkResolver;
@@ -99,7 +105,7 @@ angular.module('prismic.io', [])
 
         function buildContext() {
           maybeApi = getApiHome().then(function(api) {
-            var ref = queryString['ref'];
+            var ref = config.disableQS ? '' : queryString['ref'];
             if (!ref) {
               var allRefs = api.data.refs;
               var refMatchs = allRefs.filter(function(refDetail) {
