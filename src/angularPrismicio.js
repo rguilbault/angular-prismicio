@@ -91,8 +91,9 @@ angular.module('prismic.io', [])
           return deferred.promise;
         }
 
-        function buildContext(ref) {
+        function buildContext() {
           maybeApi = getApiHome().then(function(api) {
+            var ref = queryString['ref'];
             var context = {
               ref: (ref || api.data.master.ref),
               api: api,
@@ -116,7 +117,7 @@ angular.module('prismic.io', [])
               // Promise already resolved
               return maybeContext;
             } else {
-              maybeContext = buildContext(queryString['ref']);
+              maybeContext = buildContext();
               return maybeContext;
             }
         }
